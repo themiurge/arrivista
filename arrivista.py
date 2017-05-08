@@ -255,7 +255,8 @@ class ArchiveManager:
         self.meta.reflect()
 
     def update_archive_from_csv(self, csv_path):
-        m = pd.read_csv(csv_path).as_matrix()
+
+        m = pd.read_csv(str(csv_path)).as_matrix()
 
         # first retrieve all new magazines
         magazine_names = sorted(set(m[:,0]))
@@ -1013,6 +1014,9 @@ class Arrivista(QWidget):
     def dropEvent(self, e):
         if e.mimeData().hasText():
             filePath = e.mimeData().text()[7:]
+            # Windows fix
+            if filePath[2] == ':':
+                filePath = filePath[1:]
             self.importMessage.setText("Importazione in corso dal file {}, attendi...".format(filePath.split('/')[-1]))
             self.update()
             m, ni, ui, di = self.manager.update_archive_from_csv(filePath)
